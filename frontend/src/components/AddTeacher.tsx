@@ -1,82 +1,96 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 
-const AddTeacher = () => {
-  const [formData, setFormData] = useState({
+interface Year {
+  year: number;
+  subjects: string[];
+}
+
+interface Branch {
+  _id: string;
+  branchName: string;
+  years: Year[];
+}
+
+interface TeacherBranch {
+  branchId: string;
+  years: Year[];
+}
+
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  branches: TeacherBranch[];
+}
+
+const AddTeacher: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     password: "",
     branches: [],
   });
 
-  const [branches, setBranches] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState("");
-  const [selectedYears, setSelectedYears] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState("");
-  const [message, setMessage] = useState("");
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [selectedYears, setSelectedYears] = useState<number[]>([]);
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
 
-  
+  // Fetch branches
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/branches", {
-          withCredentials: true,
-        });
-
-        console.log("Fetched Branches:", response.data); 
+        const response = await axios.get<Branch[]>(
+          "http://localhost:5000/api/admin/branches",
+          { withCredentials: true }
+        );
         setBranches(response.data);
       } catch (error) {
         console.error("Error fetching branches:", error);
       }
     };
-
     fetchBranches();
   }, []);
 
-  
+  // Update subjects based on selected branch and years
   useEffect(() => {
-    const fetchSubjects = async () => {
-      if (!selectedBranch || selectedYears.length === 0) return;
+    if (!selectedBranch || selectedYears.length === 0) {
+      setSubjects([]);
+      return;
+    }
 
-      try {
-        const branch = branches.find((b) => b._id === selectedBranch);
-        const yearSubjects = branch?.years.find((y) => selectedYears.includes(y.year))?.subjects || [];
-        setSubjects(yearSubjects);
-      } catch (error) {
-        console.error("Error fetching subjects:", error);
-      }
-    };
+    const branch = branches.find((b) => b._id === selectedBranch);
+    const yearSubjects =
+      branch?.years
+        .filter((y) => selectedYears.includes(y.year))
+        .flatMap((y) => y.subjects) || [];
+    setSubjects(yearSubjects);
+  }, [selectedBranch, selectedYears, branches]);
 
-    fetchSubjects();
-  }, [selectedBranch, selectedYears]);
-
-  
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  
-  const handleBranchSelect = (e) => {
+  const handleBranchSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setSelectedBranch(e.target.value);
-    setSelectedYears([]); 
-    setSubjects([]); 
+    setSelectedYears([]);
+    setSubjects([]);
     setSelectedSubject("");
   };
 
-
-  const handleYearChange = (year) => {
+  const handleYearChange = (year: number) => {
     setSelectedYears((prev) =>
       prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year]
     );
   };
 
-
-  const handleSubjectSelect = (e) => {
+  const handleSubjectSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setSelectedSubject(e.target.value);
   };
-
 
   const addBranch = () => {
     if (!selectedBranch || selectedYears.length === 0 || !selectedSubject) {
@@ -84,15 +98,18 @@ const AddTeacher = () => {
       return;
     }
 
-    const newBranch = {
+    const newBranch: TeacherBranch = {
       branchId: selectedBranch,
       years: selectedYears.map((year) => ({
-        year: year,
-        subjects: [selectedSubject], 
+        year,
+        subjects: [selectedSubject],
       })),
     };
 
-    setFormData((prev) => ({ ...prev, branches: [...prev.branches, newBranch] }));
+    setFormData((prev) => ({
+      ...prev,
+      branches: [...prev.branches, newBranch],
+    }));
 
     setSelectedBranch("");
     setSelectedYears([]);
@@ -100,7 +117,7 @@ const AddTeacher = () => {
     setSelectedSubject("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:5000/api/admin/add-teacher", formData);
@@ -183,7 +200,6 @@ const AddTeacher = () => {
           </div>
         </div>
 
-
         {subjects.length > 0 && (
           <select
             value={selectedSubject}
@@ -206,7 +222,6 @@ const AddTeacher = () => {
         >
           Add Branch + Year + Subject
         </button>
-
 
         <ul className="list-disc pl-6 mt-2 text-sm">
           {formData.branches.map((b, index) => (

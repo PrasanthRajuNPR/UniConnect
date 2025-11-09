@@ -1,29 +1,45 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
 
-const TeacherAttendance = ({ teacherId }) => {
-  const [branches, setBranches] = useState([]);
-  const [uniqueBranches, setUniqueBranches] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState("");
-  const [availableYears, setAvailableYears] = useState([]);
-  const [selectedYear, setSelectedYear] = useState("");
-  const [students, setStudents] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState("");
-  const [attendanceStatus, setAttendanceStatus] = useState("Present");
-  const [message, setMessage] = useState("");
+interface TeacherAttendanceProps {
+  teacherId: string | number;
+}
 
-  
+interface Branch {
+  branchId: string;
+  branchName: string;
+  years: number[];
+}
+
+interface Student {
+  _id: string;
+  registerNumber: string;
+  name: string;
+}
+
+const TeacherAttendance: React.FC<TeacherAttendanceProps> = ({ teacherId }) => {
+  const [branches, setBranches] = useState<any[]>([]);
+  const [uniqueBranches, setUniqueBranches] = useState<Branch[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [availableYears, setAvailableYears] = useState<number[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [students, setStudents] = useState<Student[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState<string>("");
+  const [attendanceStatus, setAttendanceStatus] = useState<string>("Present");
+  const [message, setMessage] = useState<string>("");
+
   useEffect(() => {
-    const fetchTeacherData = async () => {
+    const fetchTeacherData = async (): Promise<void> => {
       try {
         console.log("Fetching teacher data for ID:", teacherId);
-        const response = await axios.get(`http://localhost:5000/api/teacher/get/${teacherId}`);
-        
+        const response = await axios.get(
+          `http://localhost:5000/api/teacher/get/${teacherId}`
+        );
+
         const allBranches = response.data.branches;
 
-        
-        const branchMap = {};
-        allBranches.forEach((item) => {
+        const branchMap: Record<string, Branch> = {};
+        allBranches.forEach((item: any) => {
           const branchId = item.branchId._id;
           if (!branchMap[branchId]) {
             branchMap[branchId] = {
@@ -32,10 +48,9 @@ const TeacherAttendance = ({ teacherId }) => {
               years: [],
             };
           }
-          branchMap[branchId].years.push(...item.years.map((y) => y.year));
+          branchMap[branchId].years.push(...item.years.map((y: any) => y.year));
         });
 
-        
         const uniqueBranchList = Object.values(branchMap);
         setUniqueBranches(uniqueBranchList);
         setBranches(allBranches);
@@ -46,24 +61,22 @@ const TeacherAttendance = ({ teacherId }) => {
     fetchTeacherData();
   }, [teacherId]);
 
-  
   useEffect(() => {
     if (selectedBranch) {
       const branch = uniqueBranches.find((b) => b.branchId === selectedBranch);
       if (branch) {
-        setAvailableYears([...new Set(branch.years)]); 
+        setAvailableYears([...new Set(branch.years)]);
       }
     } else {
       setAvailableYears([]);
     }
-    setSelectedYear(""); 
+    setSelectedYear("");
     setStudents([]);
   }, [selectedBranch, uniqueBranches]);
 
-  
   useEffect(() => {
     if (selectedBranch && selectedYear) {
-      const fetchStudents = async () => {
+      const fetchStudents = async (): Promise<void> => {
         try {
           console.log("Fetching students for Branch:", selectedBranch, "Year:", selectedYear);
           const response = await axios.get(
@@ -76,12 +89,11 @@ const TeacherAttendance = ({ teacherId }) => {
       };
       fetchStudents();
     } else {
-      setStudents([]); 
+      setStudents([]);
     }
   }, [selectedBranch, selectedYear]);
 
-  
-  const handleAttendanceSubmit = async () => {
+  const handleAttendanceSubmit = async (): Promise<void> => {
     if (!selectedStudent) {
       setMessage("Please select a student.");
       return;
@@ -93,7 +105,7 @@ const TeacherAttendance = ({ teacherId }) => {
         status: attendanceStatus,
       });
       setMessage("Attendance marked successfully!");
-      setSelectedStudent(""); 
+      setSelectedStudent("");
     } catch (error) {
       console.error("Error marking attendance:", error);
       setMessage("Error marking attendance.");
@@ -106,12 +118,14 @@ const TeacherAttendance = ({ teacherId }) => {
 
       {message && <p className="text-center text-red-500">{message}</p>}
 
-      {/* Branch Selection (Now Unique) */}
+      {/* Branch Selection */}
       <label className="block font-medium">Select Branch:</label>
       <select
         className="w-full p-2 border rounded-md mb-3"
         value={selectedBranch}
-        onChange={(e) => setSelectedBranch(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          setSelectedBranch(e.target.value)
+        }
       >
         <option value="">Select Branch</option>
         {uniqueBranches.map((branch) => (
@@ -126,12 +140,14 @@ const TeacherAttendance = ({ teacherId }) => {
       <select
         className="w-full p-2 border rounded-md mb-3"
         value={selectedYear}
-        onChange={(e) => setSelectedYear(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          setSelectedYear(e.target.value)
+        }
         disabled={!selectedBranch || availableYears.length === 0}
       >
         <option value="">Select Year</option>
         {availableYears.map((year) => (
-          <option key={year} value={year}>
+          <option key={year} value={year.toString()}>
             Year {year}
           </option>
         ))}
@@ -142,7 +158,9 @@ const TeacherAttendance = ({ teacherId }) => {
       <select
         className="w-full p-2 border rounded-md mb-3"
         value={selectedStudent}
-        onChange={(e) => setSelectedStudent(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          setSelectedStudent(e.target.value)
+        }
         disabled={!selectedYear || students.length === 0}
       >
         <option value="">Select Student</option>
@@ -158,7 +176,9 @@ const TeacherAttendance = ({ teacherId }) => {
       <select
         className="w-full p-2 border rounded-md mb-3"
         value={attendanceStatus}
-        onChange={(e) => setAttendanceStatus(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          setAttendanceStatus(e.target.value)
+        }
       >
         <option value="Present">Present</option>
         <option value="Absent">Absent</option>

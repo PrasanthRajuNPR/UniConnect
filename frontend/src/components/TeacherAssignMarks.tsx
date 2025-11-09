@@ -1,20 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
 
-const TeacherAssignMarks = ({ teacherId }) => {
-  const [branches, setBranches] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState("");
-  const [availableYears, setAvailableYears] = useState([]);
-  const [selectedYear, setSelectedYear] = useState("");
-  const [subjects, setSubjects] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState("");
-  const [students, setStudents] = useState([]);
-  const [marks, setMarks] = useState({});
-  const [message, setMessage] = useState("");
+interface TeacherAssignMarksProps {
+  teacherId: string | number;
+}
 
-  
+interface Branch {
+  branchId: string;
+  branchName: string;
+  years: Record<string, string[]>;
+}
+
+interface Student {
+  _id: string;
+  registerNumber: string;
+  name: string;
+}
+
+const TeacherAssignMarks: React.FC<TeacherAssignMarksProps> = ({ teacherId }) => {
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [availableYears, setAvailableYears] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const [students, setStudents] = useState<Student[]>([]);
+  const [marks, setMarks] = useState<Record<string, string>>({});
+  const [message, setMessage] = useState<string>("");
+
   useEffect(() => {
-    const fetchTeacherData = async () => {
+    const fetchTeacherData = async (): Promise<void> => {
       try {
         const response = await axios.get(
           `http://localhost:5000/api/teacher/get/${teacherId}`,
@@ -25,19 +40,18 @@ const TeacherAssignMarks = ({ teacherId }) => {
 
         const allBranches = response.data.branches || [];
 
-        
-        const branchMap = {};
-        allBranches.forEach((item) => {
+        const branchMap: Record<string, Branch> = {};
+        allBranches.forEach((item: any) => {
           const branchId = item.branchId._id;
           if (!branchMap[branchId]) {
             branchMap[branchId] = {
               branchId,
               branchName: item.branchId.branchName,
-              years: {}, 
+              years: {},
             };
           }
-          item.years.forEach((y) => {
-            branchMap[branchId].years[y.year] = y.subjects; 
+          item.years.forEach((y: any) => {
+            branchMap[branchId].years[y.year] = y.subjects;
           });
         });
 
@@ -50,7 +64,6 @@ const TeacherAssignMarks = ({ teacherId }) => {
     fetchTeacherData();
   }, [teacherId]);
 
-  
   useEffect(() => {
     if (selectedBranch) {
       const branch = branches.find((b) => b.branchId === selectedBranch);
@@ -65,11 +78,10 @@ const TeacherAssignMarks = ({ teacherId }) => {
     setStudents([]);
   }, [selectedBranch, branches]);
 
-  
   useEffect(() => {
-    const fetchSubjects = async () => {
+    const fetchSubjects = async (): Promise<void> => {
       if (!selectedBranch || !selectedYear) return;
-  
+
       try {
         const response = await axios.get(
           `http://localhost:5000/api/teacher/get-subjects`,
@@ -82,7 +94,7 @@ const TeacherAssignMarks = ({ teacherId }) => {
             withCredentials: true,
           }
         );
-  
+
         console.log("Fetched Subjects:", response.data.subjects);
         setSubjects(response.data.subjects || []);
       } catch (error) {
@@ -90,17 +102,14 @@ const TeacherAssignMarks = ({ teacherId }) => {
         setSubjects([]);
       }
     };
-  
-    fetchSubjects();
-    setSelectedSubject(""); 
-    
-  }, [selectedBranch, selectedYear, teacherId]);
-  
 
-  
+    fetchSubjects();
+    setSelectedSubject("");
+  }, [selectedBranch, selectedYear, teacherId]);
+
   useEffect(() => {
     if (selectedBranch && selectedYear) {
-      const fetchStudents = async () => {
+      const fetchStudents = async (): Promise<void> => {
         try {
           const response = await axios.get(
             `http://localhost:5000/api/teacher/students?branchId=${selectedBranch}&year=${selectedYear}`,
@@ -119,13 +128,11 @@ const TeacherAssignMarks = ({ teacherId }) => {
     }
   }, [selectedBranch, selectedYear]);
 
-  
-  const handleMarksChange = (studentId, value) => {
+  const handleMarksChange = (studentId: string, value: string): void => {
     setMarks((prev) => ({ ...prev, [studentId]: value }));
   };
 
-  
-  const handleSubmitMarks = async () => {
+  const handleSubmitMarks = async (): Promise<void> => {
     if (!selectedSubject) {
       setMessage("Please select a subject!");
       return;
@@ -167,7 +174,9 @@ const TeacherAssignMarks = ({ teacherId }) => {
       <select
         className="w-full p-2 border rounded-md mb-3"
         value={selectedBranch}
-        onChange={(e) => setSelectedBranch(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          setSelectedBranch(e.target.value)
+        }
       >
         <option value="">Select Branch</option>
         {branches.map((branch) => (
@@ -182,7 +191,9 @@ const TeacherAssignMarks = ({ teacherId }) => {
       <select
         className="w-full p-2 border rounded-md mb-3"
         value={selectedYear}
-        onChange={(e) => setSelectedYear(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          setSelectedYear(e.target.value)
+        }
         disabled={!selectedBranch}
       >
         <option value="">Select Year</option>
@@ -198,7 +209,9 @@ const TeacherAssignMarks = ({ teacherId }) => {
       <select
         className="w-full p-2 border rounded-md mb-3"
         value={selectedSubject}
-        onChange={(e) => setSelectedSubject(e.target.value)}
+        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+          setSelectedSubject(e.target.value)
+        }
         disabled={!selectedYear}
       >
         <option value="">Select Subject</option>
@@ -216,12 +229,16 @@ const TeacherAssignMarks = ({ teacherId }) => {
       ) : (
         students.map((student) => (
           <div key={student._id} className="flex items-center justify-between mb-2">
-            <span className="text-sm">{student.registerNumber} - {student.name}</span>
+            <span className="text-sm">
+              {student.registerNumber} - {student.name}
+            </span>
             <input
               type="number"
               className="w-16 p-1 border rounded-md"
               value={marks[student._id] || ""}
-              onChange={(e) => handleMarksChange(student._id, e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleMarksChange(student._id, e.target.value)
+              }
             />
           </div>
         ))

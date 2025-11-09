@@ -1,23 +1,32 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const EventList = () => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+interface Event {
+  _id: string;
+  title: string;
+  description: string;
+  date: string;
+  url: string;
+}
+
+const EventList: React.FC = () => {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/events", {
-          withCredentials: true,
-        });
+        const response = await axios.get<Event[]>(
+          "http://localhost:5000/api/admin/events",
+          { withCredentials: true }
+        );
         console.log("Fetched Events:", response.data);
         setEvents(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching events:", error);
+      } catch (err) {
+        console.error("Error fetching events:", err);
         setError("Failed to load events");
+      } finally {
         setLoading(false);
       }
     };
@@ -37,7 +46,9 @@ const EventList = () => {
             <div key={event._id} className="bg-white shadow-lg rounded-lg p-4">
               <h3 className="text-xl font-semibold">{event.title}</h3>
               <p className="text-gray-600">{event.description}</p>
-              <p className="text-sm text-gray-500 mt-2">📅 {new Date(event.date).toDateString()}</p>
+              <p className="text-sm text-gray-500 mt-2">
+                📅 {new Date(event.date).toDateString()}
+              </p>
               <button
                 onClick={() => window.open(event.url, "_blank")}
                 className="mt-4 w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"

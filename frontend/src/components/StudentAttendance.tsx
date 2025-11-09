@@ -1,17 +1,21 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-const StudentAttendance = ({studentId}) => {
-  const [selectedDate, setSelectedDate] = useState("");
-  const [attendanceStatus, setAttendanceStatus] = useState(null);
+interface StudentAttendanceProps {
+  studentId: string | number;
+}
 
-  const fetchAttendance = async () => {
+const StudentAttendance: React.FC<StudentAttendanceProps> = ({ studentId }) => {
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [attendanceStatus, setAttendanceStatus] = useState<string | null>(null);
+
+  const fetchAttendance = async (): Promise<void> => {
     if (!selectedDate) return alert("Please select a date");
 
     try {
       const response = await fetch(
         `http://localhost:5000/api/student/attendance/${studentId}?date=${selectedDate}`
       );
-      const data = await response.json();
+      const data: { status: string } = await response.json();
       setAttendanceStatus(data.status);
     } catch (error) {
       console.error("Error fetching attendance", error);

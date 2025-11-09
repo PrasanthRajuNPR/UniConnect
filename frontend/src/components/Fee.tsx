@@ -1,7 +1,22 @@
-import React from "react";
+interface FeePageProps {
+  name: string;
+  email: string;
+  year: string | number;
+}
 
-const FeePage = ({name,email,year}) => {
-  const studentInfo = {
+interface StudentInfo {
+  name: string;
+  studentId: string;
+  course: string;
+  semester: string;
+  totalFee: number;
+  paidFee: number;
+  dueFee: number;
+  status: "Paid" | "Pending" | "Overdue";
+}
+
+const FeePage: React.FC<FeePageProps> = ({ name, email, year }) => {
+  const studentInfo: StudentInfo = {
     name: "John Doe",
     studentId: "STU12345",
     course: "B.Tech",
@@ -9,10 +24,10 @@ const FeePage = ({name,email,year}) => {
     totalFee: 50000,
     paidFee: 35000,
     dueFee: 15000,
-    status: "Pending", 
+    status: "Pending",
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: StudentInfo["status"]) => {
     switch (status) {
       case "Paid":
         return "bg-green-500";
@@ -36,8 +51,8 @@ const FeePage = ({name,email,year}) => {
         <div className="bg-gray-200 p-4 rounded-lg mb-4">
           <p className="text-lg font-semibold">{name}</p>
           <p className="text-sm text-gray-600">Email: {email}</p>
-          <p className="text-sm text-gray-600">Course : {studentInfo.course}</p>
-          <p className="text-sm text-gray-600">Year : {year}</p>
+          <p className="text-sm text-gray-600">Course: {studentInfo.course}</p>
+          <p className="text-sm text-gray-600">Year: {year}</p>
         </div>
 
         {/* Fee Details */}
@@ -75,9 +90,6 @@ const FeePage = ({name,email,year}) => {
         >
           {studentInfo.status}
         </div>
-
-        {/* Actions */}
-        
       </div>
     </div>
   );

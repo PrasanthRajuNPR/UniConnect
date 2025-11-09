@@ -1,24 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 
-const AddEvent = () => {
-  const [formData, setFormData] = useState({
+interface Branch {
+  _id: string;
+  branchName: string;
+}
+
+interface FormData {
+  title: string;
+  description: string;
+  date: string;
+  branchId: string;
+  url: string;
+}
+
+const AddEvent: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
     date: "",
     branchId: "",
-    url: "", 
+    url: "",
   });
 
-  const [branches, setBranches] = useState([]);
-  const [message, setMessage] = useState("");
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
-    const fetchBranches = async () => {
+    const fetchBranches = async (): Promise<void> => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/branches", {
-          withCredentials: true,
-        });
+        const response = await axios.get<Branch[]>(
+          "http://localhost:5000/api/admin/branches",
+          { withCredentials: true }
+        );
 
         console.log("Fetched Branches (Event Page):", response.data);
         setBranches(response.data);
@@ -30,22 +44,32 @@ const AddEvent = () => {
     fetchBranches();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ): void => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       console.log(formData);
-      const response = await axios.post("http://localhost:5000/api/admin/add-event", formData, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/admin/add-event",
+        formData,
+        { withCredentials: true }
+      );
 
       console.log("Event Created:", response.data);
       setMessage("Event added successfully!");
-      setFormData({ title: "", description: "", date: "", branchId: "", url: "" });
+      setFormData({
+        title: "",
+        description: "",
+        date: "",
+        branchId: "",
+        url: "",
+      });
     } catch (error) {
       setMessage("Error adding event");
       console.error("Error:", error);

@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import './Academics.css'; 
+import "./Academics.css";
 
-const Academics = ({ studentId }) => {
-  const [subjects, setSubjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+interface AcademicsProps {
+  studentId: string;
+}
+
+const Academics: React.FC<AcademicsProps> = ({ studentId }) => {
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/student/subjects/${studentId}`, { withCredentials: true });
+        const response = await axios.get<{ subjects: string[] }>(
+          `http://localhost:5000/api/student/subjects/${studentId}`,
+          { withCredentials: true }
+        );
         setSubjects(response.data.subjects);
       } catch (error) {
         console.error("Error fetching subjects:", error);
@@ -47,7 +54,7 @@ const Academics = ({ studentId }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="2">No subjects found</td>
+                  <td colSpan={2}>No subjects found</td>
                 </tr>
               )}
             </tbody>

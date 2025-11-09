@@ -1,8 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 
-const AddStudent = () => {
-  const [formData, setFormData] = useState({
+// 👇 Define types for form data and branch objects
+interface FormData {
+  name: string;
+  registerNumber: string;
+  email: string;
+  password: string;
+  branchId: string;
+  year: string;
+}
+
+interface Branch {
+  _id: string;
+  branchName: string;
+}
+
+const AddStudent: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     registerNumber: "",
     email: "",
@@ -11,16 +26,17 @@ const AddStudent = () => {
     year: "",
   });
 
-  const [branches, setBranches] = useState([]); 
-  const [message, setMessage] = useState("");
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [message, setMessage] = useState<string>("");
 
   // ✅ Fetch Branches from Backend
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/branches", {
-          withCredentials: true, 
-        });
+        const response = await axios.get<Branch[]>(
+          "http://localhost:5000/api/admin/branches",
+          { withCredentials: true }
+        );
 
         console.log("Fetched Branches:", response.data);
         setBranches(response.data);
@@ -29,18 +45,22 @@ const AddStudent = () => {
         setMessage("Failed to load branches.");
       }
     };
+
     fetchBranches();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.registerNumber || !formData.email || !formData.password || !formData.branchId || !formData.year) {
+    const { name, registerNumber, email, password, branchId, year } = formData;
+    if (!name || !registerNumber || !email || !password || !branchId || !year) {
       setMessage("All fields are required!");
       return;
     }
@@ -52,11 +72,18 @@ const AddStudent = () => {
         { withCredentials: true }
       );
 
-      console.log("Student Created:", response.data); 
+      console.log("Student Created:", response.data);
       setMessage("Student added successfully!");
 
-      setFormData({ name: "", registerNumber: "", email: "", password: "", branchId: "", year: "" });
-    } catch (error) {
+      setFormData({
+        name: "",
+        registerNumber: "",
+        email: "",
+        password: "",
+        branchId: "",
+        year: "",
+      });
+    } catch (error: any) {
       console.error("Error adding student:", error.response?.data || error);
       setMessage(error.response?.data?.error || "Error adding student.");
     }
@@ -117,7 +144,7 @@ const AddStudent = () => {
           {branches.length > 0 ? (
             branches.map((branch) => (
               <option key={branch._id} value={branch._id}>
-                {branch.branchName} 
+                {branch.branchName}
               </option>
             ))
           ) : (
