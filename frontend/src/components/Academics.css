@@ -1,0 +1,98 @@
+/* Container for the entire component */
+.academics-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Title styling */
+  .academics-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: bold;
+  }
+  
+  /* Loading spinner */
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-size: 1.5rem;
+    color: #555;
+  }
+  
+  /* Table container with responsive behavior */
+  .subjects-table-container {
+    overflow-x: auto;
+  }
+  
+  /* Table styling */
+  .subjects-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+  }
+  
+  .subjects-table th,
+  .subjects-table td {
+    padding: 12px;
+    text-align: left;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+  }
+  
+  .subjects-table th {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .subjects-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .subjects-table tr:hover {
+    background-color: #ddd;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .subjects-table th,
+    .subjects-table td {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+  
+    .academics-title {
+      font-size: 1.5rem;
+    }
+  
+    .subjects-table {
+      font-size: 0.9rem;
+    }
+  
+    .loading-spinner p {
+      font-size: 1rem;
+    }
+  }
+  
+  /* Small devices and mobile */
+  @media (max-width: 480px) {
+    .academics-container {
+      padding: 10px;
+    }
+  
+    .subjects-table th,
+    .subjects-table td {
+      padding: 8px;
+    }
+  
+    .academics-title {
+      font-size: 1.25rem;
+    }
+  }
+  
