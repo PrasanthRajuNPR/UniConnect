@@ -1,6 +1,6 @@
 const express = require("express");
 const { addTeacher, addStudent, getBranches, addEvent,getEvents,getSubjectsByBranchAndYear} = require("../controllers/adminController");
-
+ 
 const router = express.Router();
 
 router.post("/add-teacher", addTeacher);
@@ -9,7 +9,7 @@ router.get("/branches", getBranches);
 router.get("/subjects", getSubjectsByBranchAndYear);
 
 
-// 🔹 Route to add an event
+// 🔹 Route to add an event 
 router.post("/add-event", addEvent);
 
 // 🔹 Route to get all events
