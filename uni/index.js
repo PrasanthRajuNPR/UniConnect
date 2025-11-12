@@ -16,7 +16,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", 
+      "http://localhost:5001", 
       "https://uniconnect-frontend.vercel.app" 
     ],
     credentials: true,
@@ -24,10 +24,10 @@ app.use(
 );
 
 app.use(express.json());
-
-// Routes
+ 
+// Routes 
 app.use("/api/admin", adminRoutes);
-app.use("/api/teacher", teacherRoutes);
+app.use("/api/teacher", teacherRoutes); 
 app.use("/api/student", studentRoutes);
 app.use("/api/auth", authRoutes);
 
@@ -38,4 +38,5 @@ app.get("/", (req, res) => {
 // Connect to MongoDB
 dbConnect();
 
-module.exports = app;
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

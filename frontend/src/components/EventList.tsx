@@ -18,7 +18,7 @@ const EventList: React.FC = () => {
     const fetchEvents = async () => {
       try {
         const response = await axios.get<Event[]>(
-          "http://localhost:5000/api/admin/events",
+          "https://uni-connect-server.vercel.app/api/admin/events",
           { withCredentials: true }
         );
         console.log("Fetched Events:", response.data);

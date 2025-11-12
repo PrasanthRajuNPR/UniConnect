@@ -1,7 +1,7 @@
 const {Teacher} = require("../models/models");
 const {Student} = require("../models/models");
 const {Branch} = require("../models/models");
-
+const {Admin} =require("../models/models")
 // Add a New Teacher
 exports.addTeacher = async (req, res) => {
   try {
@@ -107,5 +107,21 @@ exports.getEvents = async (req, res) => {
   } catch (error) {
     console.error("Error fetching events:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+exports.addAdmin = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    
+    const newAdmin = new Admin({ name, email, password });
+    await newAdmin.save();
+
+    res.status(201).json({ message: "Admin added successfully", teacher: newAdmin });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

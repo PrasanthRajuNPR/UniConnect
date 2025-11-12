@@ -30,7 +30,7 @@ const AddEvent: React.FC = () => {
     const fetchBranches = async (): Promise<void> => {
       try {
         const response = await axios.get<Branch[]>(
-          "http://localhost:5000/api/admin/branches",
+          "https://uni-connect-server.vercel.app/api/admin/branches",
           { withCredentials: true }
         );
 

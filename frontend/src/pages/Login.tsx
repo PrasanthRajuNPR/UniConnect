@@ -13,19 +13,19 @@ const Login = ({ setUser }) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
-  const theme = useTheme();
+  const theme = useTheme(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post("https://uni-connect-server.vercel.app/api/auth/login", {
         email,
         password,
         role,
       });
-
+      console.log(password)
       const userData = response.data.user;  
 
       if (userData) {

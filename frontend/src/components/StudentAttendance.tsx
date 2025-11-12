@@ -13,7 +13,7 @@ const StudentAttendance: React.FC<StudentAttendanceProps> = ({ studentId }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/student/attendance/${studentId}?date=${selectedDate}`
+        `https://uni-connect-server.vercel.app/api/student/attendance/${studentId}?date=${selectedDate}`
       );
       const data: { status: string } = await response.json();
       setAttendanceStatus(data.status);

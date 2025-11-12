@@ -20,7 +20,7 @@ const StudentAssignment: React.FC<StudentAssignmentProps> = ({ studentId }) => {
     const fetchMarks = async () => {
       try {
         const response = await axios.get<Mark[]>(
-          `http://localhost:5000/api/student/marks/${studentId}`,
+          `https://uni-connect-server.vercel.app/api/student/marks/${studentId}`,
           { withCredentials: true }
         );
         setMarks(response.data ?? []);

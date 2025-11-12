@@ -14,7 +14,7 @@ const Academics: React.FC<AcademicsProps> = ({ studentId }) => {
     const fetchSubjects = async () => {
       try {
         const response = await axios.get<{ subjects: string[] }>(
-          `http://localhost:5000/api/student/subjects/${studentId}`,
+          `https://uni-connect-server.vercel.app/api/student/subjects/${studentId}`,
           { withCredentials: true }
         );
         setSubjects(response.data.subjects);

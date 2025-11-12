@@ -33,7 +33,7 @@ const TeacherAttendance: React.FC<TeacherAttendanceProps> = ({ teacherId }) => {
       try {
         console.log("Fetching teacher data for ID:", teacherId);
         const response = await axios.get(
-          `http://localhost:5000/api/teacher/get/${teacherId}`
+          `https://uni-connect-server.vercel.app/api/teacher/get/${teacherId}`
         );
 
         const allBranches = response.data.branches;
@@ -80,7 +80,7 @@ const TeacherAttendance: React.FC<TeacherAttendanceProps> = ({ teacherId }) => {
         try {
           console.log("Fetching students for Branch:", selectedBranch, "Year:", selectedYear);
           const response = await axios.get(
-            `http://localhost:5000/api/teacher/students?branchId=${selectedBranch}&year=${selectedYear}`
+            `https://uni-connect-server.vercel.app/api/teacher/students?branchId=${selectedBranch}&year=${selectedYear}`
           );
           setStudents(response.data);
         } catch (error) {
@@ -99,7 +99,7 @@ const TeacherAttendance: React.FC<TeacherAttendanceProps> = ({ teacherId }) => {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/api/teacher/update-attendance", {
+      await axios.post("https://uni-connect-server.vercel.app/api/teacher/update-attendance", {
         studentId: selectedStudent,
         date: new Date(),
         status: attendanceStatus,

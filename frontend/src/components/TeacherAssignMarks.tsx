@@ -32,7 +32,7 @@ const TeacherAssignMarks: React.FC<TeacherAssignMarksProps> = ({ teacherId }) =>
     const fetchTeacherData = async (): Promise<void> => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/teacher/get/${teacherId}`,
+          `https://uni-connect-server.vercel.app/api/teacher/get/${teacherId}`,
           { withCredentials: true }
         );
 
@@ -84,7 +84,7 @@ const TeacherAssignMarks: React.FC<TeacherAssignMarksProps> = ({ teacherId }) =>
 
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/teacher/get-subjects`,
+          `https://uni-connect-server.vercel.app/api/teacher/get-subjects`,
           {
             params: {
               teacherId,
@@ -112,7 +112,7 @@ const TeacherAssignMarks: React.FC<TeacherAssignMarksProps> = ({ teacherId }) =>
       const fetchStudents = async (): Promise<void> => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/teacher/students?branchId=${selectedBranch}&year=${selectedYear}`,
+            `https://uni-connect-server.vercel.app/api/teacher/students?branchId=${selectedBranch}&year=${selectedYear}`,
             { withCredentials: true }
           );
           setStudents(response.data);
@@ -151,7 +151,7 @@ const TeacherAssignMarks: React.FC<TeacherAssignMarksProps> = ({ teacherId }) =>
         marks: parseInt(marks[studentId], 10),
       }));
 
-      await axios.post("http://localhost:5000/api/teacher/assign-marks", markEntries, {
+      await axios.post("https://uni-connect-server.vercel.app/api/teacher/assign-marks", markEntries, {
         withCredentials: true,
       });
 

@@ -44,7 +44,7 @@ const AddTeacher: React.FC = () => {
     const fetchBranches = async () => {
       try {
         const response = await axios.get<Branch[]>(
-          "http://localhost:5000/api/admin/branches",
+          "https://uni-connect-server.vercel.app/api/admin/branches",
           { withCredentials: true }
         );
         setBranches(response.data);
@@ -120,7 +120,7 @@ const AddTeacher: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/admin/add-teacher", formData);
+      await axios.post("https://uni-connect-server.vercel.app/api/admin/add-teacher", formData);
       setMessage("Teacher added successfully!");
       setFormData({ name: "", email: "", password: "", branches: [] });
     } catch (error) {

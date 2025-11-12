@@ -23,12 +23,13 @@ router.post("/login", async (req, res) => {
     console.log(user.password+" "+password);
     
     if (!user || user.password !== password) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" }); 
     }
 
     res.status(200).json({ message: "Login successful", user});
   } catch (error) {
     res.status(400).json({ message: "Server error", error:error.message });
+    console.log(error)
   }
 });
 

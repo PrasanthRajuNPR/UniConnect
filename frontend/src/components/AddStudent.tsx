@@ -34,7 +34,7 @@ const AddStudent: React.FC = () => {
     const fetchBranches = async () => {
       try {
         const response = await axios.get<Branch[]>(
-          "http://localhost:5000/api/admin/branches",
+          "https://uni-connect-server.vercel.app/api/admin/branches",
           { withCredentials: true }
         );
 
@@ -67,7 +67,7 @@ const AddStudent: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/admin/add-student",
+        "https://uni-connect-server.vercel.app/api/admin/add-student",
         formData,
         { withCredentials: true }
       );
