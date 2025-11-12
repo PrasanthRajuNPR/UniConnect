@@ -16,7 +16,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://uniconnect-edu.vercel.app/" 
+      "https://uniconnect-edu.vercel.app" 
     ],
     credentials: true,
   })
