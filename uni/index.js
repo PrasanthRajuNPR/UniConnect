@@ -9,13 +9,20 @@ const adminRoutes = require("./routes/adminRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const authRoutes = require("./routes/authRoutes");
+
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: 'http://localhost:5001',
-  credentials: true  
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", 
+      "https://uniconnect-frontend.vercel.app" 
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // Routes
@@ -24,14 +31,11 @@ app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/auth", authRoutes);
 
-
 app.get("/", (req, res) => {
-  res.send("Welcome to Student Portal API");
+  res.send("Welcome to Student Portal API - Deployed on Vercel");
 });
-
-
 
 // Connect to MongoDB
 dbConnect();
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports = app;
